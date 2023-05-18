@@ -1,0 +1,68 @@
+<configuration scan="true" scanPeriod="60 seconds">
+	<!-- 日志文件输出路径 -->
+	<property name="LOG_HOME" value="./logs" />
+	<!-- 日志格式 -->
+	<property name="LOG_FORMAT"
+		value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger{100}:%line] - %msg%n" />
+	<!-- 日志文件保存时间 -->
+	<property name="LOG_HISTORY" value="30" />
+	<!-- 输出日志到控制台 -->
+	<Appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_FORMAT}</pattern>
+		</encoder>
+	</Appender>
+	<!-- 普通日志输出 -->
+	<Appender name="INFO_LOG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/log_%d{yyyyMMdd}.log</fileNamePattern>
+			<maxHistory>${LOG_HISTORY}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_FORMAT}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</Appender>
+	<!-- 错误日志输出 -->
+	<Appender name="ERROR_LOG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/error_%d{yyyyMMdd}.log
+			</fileNamePattern>
+			<maxHistory>${LOG_HISTORY}</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>${LOG_FORMAT}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</Appender>
+
+	<!--输出到logstash的appender，需要用到ELK请取消注释-->
+	<!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+	<!--	&lt;!&ndash;可以访问的logstash日志收集端口&ndash;&gt;-->
+	<!--	<destination>127.0.0.1:4560</destination>-->
+	<!--	<encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">-->
+	<!--	</encoder>-->
+	<!--</appender>-->
+
+	<logger name="LogPackage" level="INFO">
+
+		<!--需要用到ELK请取消注释-->
+		<!--<appender-ref ref="LOGSTASH" />-->
+
+	</logger>
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="INFO_LOG" />
+		<appender-ref ref="ERROR_LOG" />
+	</root>
+</configuration>
