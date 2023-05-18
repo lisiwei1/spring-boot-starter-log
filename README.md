@@ -161,21 +161,6 @@ public @interface LogOperation {
 
 
 
-### 链路追踪配置
-
-在创建HTTP请求时，先在header附上tracetoken和currentOrder，不然无法实现链路追踪。请参考下面代码：
-
-```
-private HttpHeaders createHttpHeaders() {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add(LogVariableKey.TRACE_TOKEN, LogPackageHolder.getCurrentTraceToken());
-    httpHeaders.add(LogVariableKey.TRACE_TOKEN, LogPackageHolder.getCurrentOrder().toString());
-    return httpHeaders;
-}
-```
-
-
-
 ### logback.xml配置文件
 
 如果当前项目没有logback.xml，请复制starter中的logback.xml到本地，这样才能在控制台输出日志的同时将日志记录到本地日志文件，并且使用ELK时也要用到logback.xml。（logback.xml文件在 【日志配置文件】的文件夹中）
@@ -302,6 +287,7 @@ ELK是可以设置密码的，有需要请自行设置
 
 
 ## 链路追踪
+链路追踪是指服务A调用服务B的方法，可以使用日志中的tracetoken字段查出这两个服务之间调用时记录的日志。
 
 使用tracetoken进行查询，就可以查到一个请求的完整链路，而且还可以根据currentOrder字段查看调用顺序，1为首次请求，2为第二次，依次递加。
 
