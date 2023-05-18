@@ -47,18 +47,16 @@
 	</Appender>
 
 	<!--输出到logstash的appender，需要用到ELK请取消注释-->
-	<!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
-	<!--	&lt;!&ndash;可以访问的logstash日志收集端口&ndash;&gt;-->
-	<!--	<destination>127.0.0.1:4560</destination>-->
-	<!--	<encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">-->
-	<!--	</encoder>-->
-	<!--</appender>-->
+	<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<!--可以访问的logstash日志收集端口-->
+		<destination>127.0.0.1:4560</destination>
+		<encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+		</encoder>
+	</appender>
 
 	<logger name="LogPackage" level="INFO">
-
 		<!--需要用到ELK请取消注释-->
-		<!--<appender-ref ref="LOGSTASH" />-->
-
+		<appender-ref ref="LOGSTASH" />
 	</logger>
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
