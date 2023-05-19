@@ -152,9 +152,24 @@ public @interface LogOperation {
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/7a6ff87e-d5ff-45ae-a190-bfa85ff29ca7)
 
 
-新建一个配置文件，实现MethodDescConfigurer接口，重写getMethodDesc方法，自己写获取指定注解的数据的逻辑
+新建一个配置文件，实现MethodDescConfigurer接口，重写getMethodDesc方法，自己写获取指定注解的数据的逻辑，并在类上加上@Configuration注解交给spring管理。
 
 比如我现在的项目是使用我自己写的自定义注解@MethodDesc的value值来记录方法的说明的，那就按照下图的代码逻辑来获取方法说明。其他注解，比如swagger的@ApiOperation也是用相同逻辑获取注解里面的信息。
+```
+@Configuration
+public class LogConfig implements MethodDescConfigurer {
+
+
+    @Override
+    public String getMethodDesc(Method method) {
+        MethodDesc methodDesc = method.getAnnotation(MethodDesc.class);
+        if (methodDesc != null){
+            return methodDesc.value();
+        }
+        return "";
+    }
+}
+```
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/ac43f807-7b9a-4342-9832-72ae4a7f0d82)
 
