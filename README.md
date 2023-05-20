@@ -55,9 +55,9 @@ ELK界面（下面会讲如何进行ELK配置和简单使用）
 
 ### 导入starter
 
-第一步，下载源码，用idea 打开，然后打开maven执行package，执行成功后在执行install，这样就把代码打包到本地maven仓库。
+第一步，下载源码，用idea 打开，然后打开maven执行执行install，这样就把代码打包到本地maven仓库。
 
-![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/4af78418-78e0-43c4-9714-9da9e86fa0b5)
+![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/d932d70b-6007-4043-a985-149757fd869a)
 
 
 第二部，打开需要用到此starter的工程，打开pom导入starter，然后刷新maven。
