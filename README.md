@@ -172,7 +172,7 @@ public class LogConfig implements MethodDescConfigurer {
 ```
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/ac43f807-7b9a-4342-9832-72ae4a7f0d82)
-
+需要注意的是，@LogOperation注解的接口描述优先级是最高的，比一个接口被我自己定义的自定义注解@MethodDesc和@LogOperation标记，那日志里面的方法描述（desc）肯定取@LogOperation的value值。
 
 
 
