@@ -1,4 +1,4 @@
-package com.log.core.log;
+package com.log.core.log.vo;
 
 /**
  * @Author lsw

@@ -5,6 +5,10 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.log.core.annotation.LogOperation;
+import com.log.core.log.customHandle.CustomLogExceptionHandle;
+import com.log.core.log.vo.ExceptionVo;
+import com.log.core.log.vo.Host;
+import com.log.util.ApplicationUtil;
 import com.log.util.ExceptionUtil;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
@@ -110,17 +114,15 @@ public class LogPackage {
         }
         boolean isShowThrowable = true;
 
-        // TODO 此处处理自定义的业务异常,应该要设置code、message、responseParams，而不是直接抛异常
-        //  参考下面例子的BusinessException，继承于RuntimeException，用于一些业务上需要抛出的业务异常
-        // if (throwable instanceof BusinessException) {
-        //     isShowThrowable = false;
-        //     BusinessException businessException = (BusinessException) throwable;
-        //     Map<String, Object> responseParams = Maps.newHashMap();
-        //     responseParams.put(LogVariableKey.CODE, businessException.getCode());
-        //     responseParams.put(LogVariableKey.MESSAGE, businessException.getMessage());
-        //     printObject.put(LogVariableKey.RESPONSE_PARAMS, reqRspGson.toJson(responseParams));
-        // }
-
+        // 使用用户自定义的返回值及是否将异常写入日志的throwable字段异常
+        CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
+        if (handle != null){
+            ExceptionVo exceptionVo = handle.customExceptionHandler(throwable);
+            if (exceptionVo != null){
+                isShowThrowable = exceptionVo.getShowThrowable();
+                printObject.put(LogVariableKey.RESPONSE_PARAMS, reqRspGson.toJson(exceptionVo.getResponseParams()));
+            }
+        }
 
         if (isShowThrowable) {
             String throwableToString = ExceptionUtil.throwableToString(throwable);
@@ -129,7 +131,6 @@ public class LogPackage {
             }
         }
 
-        // TODO sql语句应该也要记录
         printObject.put(LogVariableKey.SQLS, sqls);
 
         printObject.put(LogVariableKey.REQUEST_TIME, DateFormatUtils.format(startTime, DATE_FORMAT_PATTERN));

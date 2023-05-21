@@ -19,6 +19,7 @@ public class LogConfig {
     @Value("${log.excludeClassNames:}")
     private String exclude_class_names_str;
 
+
     @PostConstruct
     public void init(){
         initExcludeClass();
