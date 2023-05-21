@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.log.core.log.LogAspect,\
   com.log.core.async.TaskPool,com.log.core.async.AsyncComp,\
-  com.log.core.config.LogConfig,com.log.util.ApplicationUtil
+  com.log.core.config.LogConfig,com.log.util.ApplicationUtil,\
+  com.log.core.config.StarterAutoConfiguration
 

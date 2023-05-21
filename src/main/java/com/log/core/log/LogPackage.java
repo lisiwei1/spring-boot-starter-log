@@ -12,7 +12,6 @@ import com.log.util.ApplicationUtil;
 import com.log.util.ExceptionUtil;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.util.List;
 import java.util.Map;
@@ -116,16 +115,14 @@ public class LogPackage {
         boolean isShowThrowable = true;
 
         // 使用用户自定义的返回值及是否将异常写入日志的throwable字段异常
-        try{
-            CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
-            if (handle != null){
-                ExceptionVo exceptionVo = handle.customExceptionHandler(throwable);
-                if (exceptionVo != null){
-                    isShowThrowable = exceptionVo.getShowThrowable();
-                    printObject.put(LogVariableKey.RESPONSE_PARAMS, reqRspGson.toJson(exceptionVo.getResponseParams()));
-                }
+        CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
+        if (handle != null){
+            ExceptionVo exceptionVo = handle.customExceptionHandler(throwable);
+            if (exceptionVo != null){
+                isShowThrowable = exceptionVo.getShowThrowable();
+                printObject.put(LogVariableKey.RESPONSE_PARAMS, reqRspGson.toJson(exceptionVo.getResponseParams()));
             }
-        }catch (NoSuchBeanDefinitionException e){}
+        }
 
         if (isShowThrowable) {
             String throwableToString = ExceptionUtil.throwableToString(throwable);

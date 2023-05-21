@@ -8,8 +8,8 @@ import com.log.core.log.vo.ExceptionVo;
  * @Author lsw
  * @Date 2023/5/20 10:39
  */
-public interface CustomLogExceptionHandle {
+public interface CustomLogExceptionHandler {
 
-    ExceptionVo customExceptionHandler(Throwable throwable);
+    ExceptionVo handleException(Throwable throwable);
 
 }
