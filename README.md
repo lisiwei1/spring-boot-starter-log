@@ -321,6 +321,25 @@ private HttpHeaders createHttpHeaders() {
 }
 ```
 
+## 自定义异常处理
+
+方法执行时出现异常，日志会将异常信息填入throwable字段，而且因为发生异常，所以日志中没有响应出参responseParams字段。有些场景下代码会抛出特定的业务异常，然后返回特定的出参，并且不需要将异常信息记录到throwable字段，那么可以参考下面的代码实现。
+
+新建一个类实现CustomLogExceptionHandle接口，重写customExceptionHandler，然后在这个方法内对异常进行处理，返回的出参ExceptionVo中的isShowThrowable表示是否将异常记录到日志throwable字段，responseParams则是一个存储出参的map。
+
+![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/7b982b9e-7df6-4dcb-b8b4-b9fd96a181b7)
+
+
+
+然后将此类注册到bean
+
+```
+@Bean("CustomLogExceptionHandle")
+public CustomExceptionHandle customExceptionHandle(){
+	return new CustomExceptionHandle();
+}
+```
+
 
 
 
