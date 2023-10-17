@@ -5,10 +5,10 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.log.core.annotation.LogOperation;
-import com.log.core.log.customHandle.CustomLogExceptionHandle;
+import com.log.core.log.customHandle.CustomExceptionHandlerSingleton;
+import com.log.core.log.customHandle.CustomLogExceptionHandler;
 import com.log.core.log.vo.ExceptionVo;
 import com.log.core.log.vo.Host;
-import com.log.util.ApplicationUtil;
 import com.log.util.ExceptionUtil;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
@@ -115,9 +115,10 @@ public class LogPackage {
         boolean isShowThrowable = true;
 
         // 使用用户自定义的返回值及是否将异常写入日志的throwable字段异常
-        CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
-        if (handle != null){
-            ExceptionVo exceptionVo = handle.customExceptionHandler(throwable);
+        // CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
+        CustomLogExceptionHandler handler = CustomExceptionHandlerSingleton.getInstance();
+        if (handler != null){
+            ExceptionVo exceptionVo = handler.handleException(throwable);
             if (exceptionVo != null){
                 isShowThrowable = exceptionVo.getShowThrowable();
                 printObject.put(LogVariableKey.RESPONSE_PARAMS, reqRspGson.toJson(exceptionVo.getResponseParams()));
