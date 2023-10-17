@@ -115,7 +115,6 @@ public class LogPackage {
         boolean isShowThrowable = true;
 
         // 使用用户自定义的返回值及是否将异常写入日志的throwable字段异常
-        // CustomLogExceptionHandle handle = (CustomLogExceptionHandle) ApplicationUtil.getBean("CustomLogExceptionHandle");
         CustomLogExceptionHandler handler = CustomExceptionHandlerSingleton.getInstance();
         if (handler != null){
             ExceptionVo exceptionVo = handler.handleException(throwable);
