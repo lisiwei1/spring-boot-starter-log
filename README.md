@@ -325,7 +325,7 @@ private HttpHeaders createHttpHeaders() {
 
 方法执行时出现异常，日志会将异常信息填入throwable字段，而且因为发生异常，所以日志中没有响应出参responseParams字段。有些场景下代码会抛出特定的业务异常，然后返回特定的出参，并且不需要将异常信息记录到throwable字段，那么可以参考下面的代码实现。
 
-CustomLogExceptionHandler，handleException方法，然后在这个方法内对异常进行处理，返回的出参ExceptionVo中的isShowThrowable表示是否将异常记录到日志throwable字段，responseParams则是一个存储出参的map。
+新建一个类实现CustomLogExceptionHandler接口，重写handleException方法，然后在这个方法内对异常进行处理，返回的出参ExceptionVo中的isShowThrowable表示是否将异常记录到日志throwable字段，responseParams则是一个存储出参的map。
 
 ```
 @Configuration
