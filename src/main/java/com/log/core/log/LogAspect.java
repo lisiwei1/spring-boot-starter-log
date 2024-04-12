@@ -3,7 +3,6 @@ package com.log.core.log;
 import com.google.common.collect.Maps;
 import com.log.core.annotation.LogOperation;
 import com.log.core.async.AsyncComp;
-import com.log.core.config.LogConfig;
 import com.log.core.log.customHandle.MethodDescConfigurer;
 import com.log.util.IpUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,15 +12,22 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author lsw
@@ -30,6 +36,8 @@ import java.util.Map;
 @Aspect
 @Component
 public class LogAspect {
+
+    private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     //设置切点
     @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
@@ -59,8 +67,33 @@ public class LogAspect {
     @Autowired
     private AsyncComp asyncComp;
 
+    @Autowired
+    @Qualifier("logTaskExecutor")
+    private ThreadPoolExecutor logTaskExecutor;
+
     @Autowired(required = false)
     private MethodDescConfigurer methodDescConfigurer;
+
+    @Value("${log.excludeClassNames:}")
+    private String exclude_class_names_str;
+
+    @PostConstruct
+    public void init(){
+        logger.info(" ------------------- ");
+        logger.info("日志线程池相关参数：");
+        logger.info("核心线程数：" + logTaskExecutor.getCorePoolSize());
+        logger.info("最大线程数：" + logTaskExecutor.getMaximumPoolSize());
+        logger.info("线程空闲时间：" + logTaskExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS) + " 毫秒");
+        logger.info("工作队列类型：" + logTaskExecutor.getQueue().getClass().getName());
+        logger.info("线程工厂类型：" + logTaskExecutor.getThreadFactory().getClass().getName());
+        RejectedExecutionHandler rejectedExecutionHandler = logTaskExecutor.getRejectedExecutionHandler();
+        if (rejectedExecutionHandler != null) {
+            logger.info("拒绝策略类型：" + rejectedExecutionHandler.getClass().getName());
+        } else {
+            logger.info("拒绝策略：无");
+        }
+        logger.info(" ------------------- ");
+    }
 
 
     /**
@@ -91,12 +124,15 @@ public class LogAspect {
         } finally {
             LogPackage logPackage = LogPackageHolder.getLogPackage();
             if (logPackage != null) {
-                asyncComp.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        logPackage.print();
-                    }
-                });
+                // asyncComp.execute(new Runnable() {
+                //     @Override
+                //     public void run() {
+                //         logPackage.print();
+                //     }
+                // });
+
+                logTaskExecutor.execute(() -> logPackage.print());
+                // TODO 处理任务被拒绝的情况
             }
             LogPackageHolder.clear();
         }
@@ -109,7 +145,8 @@ public class LogAspect {
     private void doBefore(ProceedingJoinPoint jp) throws Throwable{
         // 跳过指定的class
         String className = jp.getSignature().getDeclaringTypeName();
-        if (className.matches(LogConfig.getExcludeClassNames())) {
+        // if (className.matches(LogConfig.getExcludeClassNames())) {
+        if (isExcluded(className, exclude_class_names_str)) {
             return;
         }
 
@@ -146,6 +183,30 @@ public class LogAspect {
      */
     private Object doAfter(Object result){
         return result;
+    }
+
+
+    /**
+     * 判断包含指定的类名或者在指定的包内，是则返回true
+     * @param className 当前类名
+     * @param excludeClassNames 排除的包名或者类名，多个包名或类名用逗号隔开
+     * @return
+     */
+    private boolean isExcluded(String className, String excludeClassNames) {
+        if(StringUtils.isBlank(excludeClassNames)){
+            return false;
+        }
+        if (className.startsWith(excludeClassNames)) {
+            return true;
+        } else {
+            String[] excludePackages = excludeClassNames.split(",");
+            for (String packageName : excludePackages) {
+                if (className.startsWith(packageName.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

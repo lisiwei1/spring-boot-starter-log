@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
  * @Author lsw
  * @Date 2023/5/18 18:41
  */
+@Deprecated
 @Component
 public class LogConfig {
 
