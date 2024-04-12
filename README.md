@@ -66,7 +66,7 @@ ELK界面（下面会讲如何进行ELK配置和简单使用）
 <dependency>
     <groupId>com.lsw.log</groupId>
     <artifactId>spring-boot-starter-log</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 
@@ -127,7 +127,7 @@ public @interface LogOperation {
 指定特定包名下的类下的方法不记录日志。
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/2be460f3-d943-459e-9179-752d66386aa6)
-注意是填package名，不要包含类名。（未实现指定类的功能 ，后面有时间再加上此功能。）
+可以填package名，也可以包含类名。
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/d49ca2f6-e481-4c3c-a6e6-966d05b57c66)
 
