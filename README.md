@@ -179,31 +179,31 @@ public class LogConfig implements MethodDescConfigurer {
 之前处理日志数据的线程池是由 Spring 自动配置的，默认情况下是一个单线程的线程池，因此现在改成核心线程为当前机器的CPU逻辑处理器数，最大线程数是核心线程的两倍，具体信息可以在启动服务的时候可以在控制台查看，并且这个线程池可以自行定义，定义方式如下：
 ```
 @Bean(name = "logTaskExecutor")
-	public ThreadPoolExecutor logTaskExecutor() {
-		// 获取当前运行时对象
-		Runtime runtime = Runtime.getRuntime();
-		// 获取当前机器的CPU数量
-		int cpuCount = runtime.availableProcessors();
+public ThreadPoolExecutor logTaskExecutor() {
+	// 获取当前运行时对象
+	Runtime runtime = Runtime.getRuntime();
+	// 获取当前机器的CPU数量
+	int cpuCount = runtime.availableProcessors();
 
-		// 核心线程数
-		int corePoolSize = cpuCount * 2;
-		// 最大线程数
-		int maxPoolSize = cpuCount * 4;
-		// 空闲线程存活时间
-		long keepAliveTime = 60L;
-		// 空闲线程存活时间的时间单位
-		TimeUnit unit = TimeUnit.SECONDS;
-		// 任务队列，最大容量5000
-		LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(5000);
-		// 线程工厂，用于创建新线程
-		ThreadFactory threadFactory = Executors.defaultThreadFactory();
-		// 拒绝策略，用于处理当任务添加到线程池被拒绝时的情况
-		RejectedExecutionHandler handler = new ThreadPoolExecutor.DiscardPolicy();
+	// 核心线程数
+	int corePoolSize = cpuCount * 2;
+	// 最大线程数
+	int maxPoolSize = cpuCount * 4;
+	// 空闲线程存活时间
+	long keepAliveTime = 60L;
+	// 空闲线程存活时间的时间单位
+	TimeUnit unit = TimeUnit.SECONDS;
+	// 任务队列，最大容量5000
+	LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(5000);
+	// 线程工厂，用于创建新线程
+	ThreadFactory threadFactory = Executors.defaultThreadFactory();
+	// 拒绝策略，用于处理当任务添加到线程池被拒绝时的情况
+	RejectedExecutionHandler handler = new ThreadPoolExecutor.DiscardPolicy();
 
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime,
-				unit, workQueue, threadFactory, handler);
-		return executor;
-	}
+	ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime,
+			unit, workQueue, threadFactory, handler);
+	return executor;
+}
 ```
 
 
