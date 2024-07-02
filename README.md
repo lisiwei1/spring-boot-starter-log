@@ -6,6 +6,8 @@
 
 使用AOP拦截web请求和@Scheduled的定时任务，以及@LogOperation标记的方法，ThreadLocal记录下相关的参数的日志，可以将此日志导入ELK实现秒查日志，并且支持链路追踪。
 
+并且处理日志的线程池参数会在程序启动后打印到控制台，也可以自行定义线程池，下面有使用方法。
+
 
 
 默认日志格式如下，如有需要可以自行修改源码。
@@ -66,7 +68,7 @@ ELK界面（下面会讲如何进行ELK配置和简单使用）
 <dependency>
     <groupId>com.lsw.log</groupId>
     <artifactId>spring-boot-starter-log</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 
@@ -127,7 +129,7 @@ public @interface LogOperation {
 指定特定包名下的类下的方法不记录日志。
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/2be460f3-d943-459e-9179-752d66386aa6)
-注意是填package名，不要包含类名。（未实现指定类的功能 ，后面有时间再加上此功能。）
+可以填package名，也可以包含类名。
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/d49ca2f6-e481-4c3c-a6e6-966d05b57c66)
 
@@ -173,6 +175,38 @@ public class LogConfig implements MethodDescConfigurer {
 
 ![image](https://github.com/lisiwei1/spring-boot-starter-log/assets/44285123/ac43f807-7b9a-4342-9832-72ae4a7f0d82)
 需要注意的是，@LogOperation注解的接口描述优先级是最高的，比一个接口被我自己定义的自定义注解@MethodDesc和@LogOperation标记，那日志里面的方法描述（desc）肯定取@LogOperation的value值。
+
+### 自定义日志处理线程池
+
+之前处理日志数据的线程池是由 Spring 自动配置的，默认情况下是一个单线程的线程池，因此现在改成核心线程为当前机器的CPU逻辑处理器数，最大线程数是核心线程的两倍，具体信息可以在启动服务的时候可以在控制台查看，并且这个线程池可以自行定义，定义方式如下：
+```
+@Bean(name = "logTaskExecutor")
+public ThreadPoolExecutor logTaskExecutor() {
+	// 获取当前运行时对象
+	Runtime runtime = Runtime.getRuntime();
+	// 获取当前机器的CPU数量
+	int cpuCount = runtime.availableProcessors();
+
+	// 核心线程数
+	int corePoolSize = cpuCount * 2;
+	// 最大线程数
+	int maxPoolSize = cpuCount * 4;
+	// 空闲线程存活时间
+	long keepAliveTime = 60L;
+	// 空闲线程存活时间的时间单位
+	TimeUnit unit = TimeUnit.SECONDS;
+	// 任务队列，最大容量5000
+	LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(5000);
+	// 线程工厂，用于创建新线程
+	ThreadFactory threadFactory = Executors.defaultThreadFactory();
+	// 拒绝策略，用于处理当任务添加到线程池被拒绝时的情况
+	RejectedExecutionHandler handler = new ThreadPoolExecutor.DiscardPolicy();
+
+	ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime,
+			unit, workQueue, threadFactory, handler);
+	return executor;
+}
+```
 
 
 
