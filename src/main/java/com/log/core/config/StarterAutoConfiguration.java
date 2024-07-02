@@ -39,7 +39,7 @@ public class StarterAutoConfiguration {
         // 空闲线程存活时间的时间单位
         TimeUnit unit = TimeUnit.SECONDS;
         // 任务队列，最大容量5000
-        LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(5000);
+        LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
         // 线程工厂，用于创建新线程
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         // 拒绝策略，用于处理当任务添加到线程池被拒绝时的情况
