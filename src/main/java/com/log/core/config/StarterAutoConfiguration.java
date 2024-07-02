@@ -38,7 +38,7 @@ public class StarterAutoConfiguration {
         long keepAliveTime = 30L;
         // 空闲线程存活时间的时间单位
         TimeUnit unit = TimeUnit.SECONDS;
-        // 任务队列，最大容量5000
+        // 无界任务队列
         LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
         // 线程工厂，用于创建新线程
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
