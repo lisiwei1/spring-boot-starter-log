@@ -389,10 +389,12 @@ public class MyCustomExceptionHandler implements CustomLogExceptionHandler {
 
 ### SQL语句日志
 
-此项目并未记录SQL日志，如工程中有sql相关的记录，请调用下面方法将SQL信息添加到日志
+此项目支持记录SQL日志，如工程中有sql相关的记录，请调用下面方法将SQL信息添加到日志
 
 ```
 LogPackageHolder.addSQL(sqltext); // sqltext指具体sql信息
 ```
+
+具体使用方式比如pom文件引入p6spy来记录sql日志，然后写一个类继承p6spy的FormattedLogger类并交给spring管理，重写logText方法，在此方法加上LogPackageHolder.addSQL(text);即可记录到sql日志
 
 ![image](https://user-images.githubusercontent.com/44285123/236731896-e1e47499-127a-4085-abc1-78de5ae6a343.png)
