@@ -2,7 +2,7 @@
 
 ## 简介
 
-此项目为日志框架的starter的源码（仅支持Spring Boot 2.x版本），直接下载后打包到maven，然后其他工程通过maven导入即可（下面会详细描述使用方法）。
+此项目为日志框架的starter的源码（当前为Spring Boot 2.x版本，SpringBoot 3.x版本请切换到springboot3分支），直接下载后打包到maven，然后其他工程通过maven导入即可（下面会详细描述使用方法）。
 
 使用AOP拦截web请求和@Scheduled的定时任务，以及@LogOperation标记的方法，ThreadLocal记录下相关的参数的日志，可以将此日志导入ELK实现秒查日志，并且支持链路追踪。
 
