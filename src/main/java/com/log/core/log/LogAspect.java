@@ -5,6 +5,8 @@ import com.log.core.annotation.LogOperation;
 import com.log.core.async.AsyncComp;
 import com.log.core.log.customHandle.MethodDescConfigurer;
 import com.log.util.IpUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,8 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionHandler;
